@@ -1,13 +1,19 @@
 #![allow(unconditional_recursion, dead_code, unused_variables, unused_imports)]
 
+extern crate time;
+
 use std::iter;
+use time::PreciseTime;
 
 fn main() {
+    let start = PreciseTime::now();
     // solve(746, vec!(100, 75, 2, 10, 3, 8));
-    solve(808, vec!(75, 100, 4, 1, 3, 3));
+    solve(808, vec!(75, 100, 4, 1, 3, 3)); //Time to beat: approx. 8 seconds.
     // solve(100, vec!(25, 75, 100, 8, 9, 10));
     // solve(100, vec!(8, 9, 10, 1));
     // solve(100, vec!(1,2,3,4,10,80));
+    let end = PreciseTime::now();
+    println!("{} seconds", start.to(end));
 }
 
 fn solve(target: usize, raw_numbers: Vec<usize>) {
@@ -26,9 +32,9 @@ fn print(numbers: &Vec<Box<Number>>) {
 fn check(target: usize, numbers: Vec<Box<Number>>) -> Vec<Box<Number>> {
     let mut solutions: Vec<Box<Number>> = vec!();
     for i in 0..numbers.len() {
-        for j in 0..numbers.len() {
-            if i == j { continue; }
-            for k in 0..4 {
+        for j in (i + 1)..numbers.len() {
+            // if i == j { continue; }
+            for k in 0..6 {
                 // if solutions.len() > 0 { continue; }//TODO: remove to look for more than 1 solution.
                 let a = numbers.get(i).unwrap().another();
                 let b = numbers.get(j).unwrap().another();
@@ -37,6 +43,8 @@ fn check(target: usize, numbers: Vec<Box<Number>>) -> Vec<Box<Number>> {
                     1 => Box::new(Subtract{a:a,b:b}) as Box<Number>,
                     2 => Box::new(Multiply{a:a,b:b}) as Box<Number>,
                     3 => Box::new(Divide{a:a,b:b}) as Box<Number>,
+                    4 => Box::new(Subtract{a:b,b:a}) as Box<Number>,
+                    5 => Box::new(Divide{a:b,b:a}) as Box<Number>,
                     _ => panic!()
                 };
                 if let Some(valid_number) = combination.value() {
